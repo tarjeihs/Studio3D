@@ -85,18 +85,18 @@ void COpenGLShader::Compile()
     glDeleteShader(VertexShaderProgram->ShaderID);
     glDeleteShader(FragmentShaderProgram->ShaderID);
 
-    VAO = MakeUniquePtr<SVertexArrayObject>();
-    VAO->Bind();
-
-    VBO = MakeUniquePtr<SVertexBufferObject>(Vertices, sizeof(Vertices));
-    IBO = MakeUniquePtr<SIndexBufferObject>(Indices, sizeof(Indices));
-    
-    VAO->LinkAttrib(*VBO.Get(), 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-    VAO->LinkAttrib(*VBO.Get(), 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-
-    VAO->Unbind();
-    VBO->Unbind();
-    IBO->Unbind();
+    //VAO = MakeUniquePtr<SVertexArray>();
+    //VAO->Bind();
+//
+    //VBO = MakeUniquePtr<SVertexBuffer>(Vertices, sizeof(Vertices));
+    //IBO = MakeUniquePtr<SIndexBuffer>(Indices, sizeof(Indices));
+    //
+    //VAO->LinkAttrib(*VBO.Get(), 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);                       // Position Attribute
+    //VAO->LinkAttrib(*VBO.Get(), 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));     // Normal Attribute
+//
+    //VAO->Unbind();
+    //VBO->Unbind();
+    //IBO->Unbind();
 }
 
 void COpenGLShader::Use()
@@ -104,24 +104,24 @@ void COpenGLShader::Use()
     glUseProgram(ShaderID);
 }
 
-void COpenGLShader::Render()
-{
-    VAO->Bind();
-    glDrawElements(GL_TRIANGLES, sizeof(Indices), GL_UNSIGNED_INT, 0);
-    VAO->Unbind();
-}
+//>void COpenGLShader::Render()
+//>{
+//>    VAO->Bind();
+//>    glDrawElements(GL_TRIANGLES, sizeof(Indices), GL_UNSIGNED_INT, 0);
+//>    VAO->Unbind();
+//>}
 
 void COpenGLShader::Delete()
 {
-    VAO->Delete();
-    VBO->Delete();
-    IBO->Delete();
+    //VAO->Delete();
+    //VBO->Delete();
+    //IBO->Delete();
     glDeleteProgram(ShaderID);
 }
 
-void COpenGLShader::SetVec3(const std::string& Name, const SVector3f& Vec3) const
+void COpenGLShader::SetVec3(const std::string& Name, const glm::vec3& Vec3) const
 {
-    glUniform3f(glGetUniformLocation(ShaderID, Name.c_str()), Vec3.X, Vec3.Y, Vec3.Z);
+    glUniform3f(glGetUniformLocation(ShaderID, Name.c_str()), Vec3.x, Vec3.y, Vec3.z);
 }
 
 void COpenGLShader::SetInt(const std::string& Name, int32 Value) const
@@ -139,7 +139,7 @@ void COpenGLShader::SetBool(const std::string& Name, bool bValue) const
     glUniform1i(glGetUniformLocation(ShaderID, Name.c_str()), (int32)bValue);
 }
 
-void COpenGLShader::SetMat4(const char* str, const glm::mat4& Matrix) const
+void COpenGLShader::SetMat4(const std::string& Name, const glm::mat4& Matrix) const
 {
-    glUniformMatrix4fv(glGetUniformLocation(ShaderID, str), 1, GL_FALSE, &Matrix[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(ShaderID, Name.c_str()), 1, GL_FALSE, &Matrix[0][0]);
 }

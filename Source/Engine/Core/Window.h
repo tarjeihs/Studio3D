@@ -15,11 +15,8 @@ struct SWindowSpecification
     uint32 Height;
 };
 
-using EventCallbackFun = std::function<void(CEvent&)>;
-
 struct SWindowUserData
 {
-    EventCallbackFun EventCallback;
 };
 
 class CWindow
@@ -39,16 +36,15 @@ public:
 
     virtual ~CWindow() = default;
     
-    virtual void CreateWindow() = 0;
+    virtual void CreateNativeWindow() = 0;
     virtual void DestroyWindow() = 0;
 
     virtual void Poll() = 0;
     virtual void Swap() = 0;
     
     virtual bool ShouldClose() const = 0;
-    virtual void SetEventCallback(const EventCallbackFun& CallbackFun) = 0;
 
-    inline void* GetWindowHandle() const
+    inline void* GetNativeWindow() const
     {
         return WindowHandle;
     } 

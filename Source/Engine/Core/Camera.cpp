@@ -3,6 +3,8 @@
 
 #include <glm.hpp>
 
+CCamera* CCamera::GCamera = nullptr;
+
 void CCamera::CalculateCameraTransform()
 {
     glm::vec3 NewFront;
@@ -13,4 +15,7 @@ void CCamera::CalculateCameraTransform()
     Front = glm::normalize(NewFront);
     Right = glm::normalize(glm::cross(Front, WorldUp));
     Up = glm::normalize(glm::cross(Right, Front));
+
+    ViewMatrix = glm::lookAt(Position, Position + Front, Up);
+    ProjectionMatrix = glm::perspective(glm::radians(FieldOfView), 1200.0f / 900.0f, 0.1f, 100.0f);
 }
