@@ -28,8 +28,6 @@ bool CShader::LoadSourceFile(const EShaderType ShaderType, const char* FilePath)
     catch (std::ifstream::failure&)
     {
         ASSERT(false, "File was not successfully read.");
-        return false;
     }
-    
     return false;
 }

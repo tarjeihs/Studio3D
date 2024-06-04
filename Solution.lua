@@ -19,6 +19,7 @@ workspace "Engine"
     group "Module Dependency"
         include "../GLFW/Source/GLFW.Target.lua"
         include "../GLAD/Source/GLAD.Target.lua"
+        include "../GLM/Source/GLM.Target.lua"
     group ""
 
     group "My Module"

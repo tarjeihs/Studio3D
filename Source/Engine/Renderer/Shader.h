@@ -1,4 +1,5 @@
 #pragma once
+#include "fwd.hpp"
 #include "../../../../Math/Source/MathTypes.h"
 #include "../../../../Math/Source/Core/Vector3.h"
 #include "../../../../Memory/Source/Core/Memory.h"
@@ -123,6 +124,7 @@ public:
     virtual ~CShader() = default;
     
     virtual void Compile() = 0;
+    virtual void Use() = 0;
     virtual void Render() = 0;
     virtual void Delete() = 0;
 
@@ -130,7 +132,8 @@ public:
     virtual void SetInt(const std::string& Name, int32 Value) const = 0;
     virtual void SetFloat(const std::string& Name, float Value) const = 0;
     virtual void SetBool(const std::string& Name, bool bValue) const = 0;
-
+    virtual void SetMat4(const char* str, const glm::mat4& mat) const = 0;
+    
     FORCEINLINE uint32 GetShaderID() const;
 
     bool LoadSourceFile(const EShaderType ShaderType, const char* FilePath);

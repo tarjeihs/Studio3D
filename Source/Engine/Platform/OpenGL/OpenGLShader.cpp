@@ -2,18 +2,40 @@
 #include "OpenGLShader.h"
 
 #include "Engine/Engine.h"
+#include "glm.hpp"
+#include "gtc/type_ptr.hpp"
 
 GLfloat Vertices[] = {
-    // Positions        // Colors
-    0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, // Top Right
-    0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, // Bottom Right
-   -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f, // Bottom Left
-   -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f  // Top Left 
+    // Positions          // Colors
+    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  // Bottom-left-back
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  // Bottom-right-back
+     0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,  // Top-right-back
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  // Top-left-back
+    -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,  // Bottom-left-front
+     0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  // Bottom-right-front
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  // Top-right-front
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f   // Top-left-front
 };
 
 GLuint Indices[] = {
-    0, 1, 3, // First Triangle
-    1, 2, 3  // Second Triangle
+    // Back face
+    0, 1, 2,
+    2, 3, 0,
+    // Front face
+    4, 5, 6,
+    6, 7, 4,
+    // Left face
+    0, 3, 7,
+    7, 4, 0,
+    // Right face
+    1, 5, 6,
+    6, 2, 1,
+    // Bottom face
+    0, 1, 5,
+    5, 4, 0,
+    // Top face
+    3, 2, 6,
+    6, 7, 3
 };
 
 void COpenGLShader::Compile()
@@ -77,11 +99,15 @@ void COpenGLShader::Compile()
     IBO->Unbind();
 }
 
-void COpenGLShader::Render()
+void COpenGLShader::Use()
 {
     glUseProgram(ShaderID);
+}
+
+void COpenGLShader::Render()
+{
     VAO->Bind();
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, sizeof(Indices), GL_UNSIGNED_INT, 0);
     VAO->Unbind();
 }
 
@@ -111,4 +137,9 @@ void COpenGLShader::SetFloat(const std::string& Name, float Value) const
 void COpenGLShader::SetBool(const std::string& Name, bool bValue) const
 {
     glUniform1i(glGetUniformLocation(ShaderID, Name.c_str()), (int32)bValue);
+}
+
+void COpenGLShader::SetMat4(const char* str, const glm::mat4& Matrix) const
+{
+    glUniformMatrix4fv(glGetUniformLocation(ShaderID, str), 1, GL_FALSE, &Matrix[0][0]);
 }

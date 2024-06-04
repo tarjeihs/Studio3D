@@ -21,12 +21,14 @@
         "%{prj.location}",
         "../../GLFW/Source/Vendor/glfw/include",
         "../../GLAD/Source/Vendor/glad/include",
+        "../../GLM/Source/Vendor/glm/glm",
     }
 
     links 
     {
         "GLFW",
         "GLAD",
+        "GLM",
         "opengl32.lib"
     }
 
