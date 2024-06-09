@@ -6,8 +6,9 @@
 !/.git*
 
 # Do not ignore source, config and plugins dirs.
-!/Source/**
 !/Build/**
+!/Editor/**
+!/Engine/**
 
 # Windows
 ehthumbs.db
