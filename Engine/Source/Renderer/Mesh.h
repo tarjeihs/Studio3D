@@ -20,14 +20,6 @@ struct SMeshAsset
     }
 };
 
-struct SVertex
-{
-    glm::vec3 Position;
-    glm::vec3 Normal;
-    glm::vec2 TexCoor;
-    int TriangleIndex;
-};
-
 class CMesh
 {
 private:
@@ -60,5 +52,6 @@ public:
 
     void UploadAssetData(const std::vector<glm::vec3>& Vertices, const std::vector<glm::vec3>& Normals, const std::vector<glm::vec2>& UV0, const std::vector<uint32>& Indices);
 
+    // Draw Call
     void Draw();
 };

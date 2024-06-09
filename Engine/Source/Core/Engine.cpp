@@ -23,8 +23,8 @@ void CEngine::Start()
     Window->CreateNativeWindow();
     Renderer = new COpenGLRenderer();
     Scene = new CScene();
-    UI = new COpenGLImGui();
-    UI->Enable();
+    ImGui = new COpenGLImGui();
+    ImGui->Enable();
     
     Application = CreateApplication();
     Application->OnStart();
@@ -34,12 +34,11 @@ void CEngine::Run()
 {
     while (!Window->ShouldClose())
     {
-        Time.Update();
+        Metrics.Reset();
+        Time.Validate();
 
         Window->Poll();
-        
         Application->OnUpdate(Time.GetDeltaTime());
-
         Scene->Tick(Time.GetDeltaTime());
 
         Renderer->BeginFrame();
@@ -49,9 +48,9 @@ void CEngine::Run()
         }
         Renderer->EndFrame();
 
-        UI->BeginFrame();
-        UI->OnRender(Time.GetDeltaTime());
-        UI->EndFrame();
+        ImGui->BeginFrame();
+        ImGui->OnRender(Time.GetDeltaTime());
+        ImGui->EndFrame();
         
         Window->Swap();
     }
@@ -59,7 +58,7 @@ void CEngine::Run()
 
 void CEngine::Stop()
 {
-    UI->Disable();
+    ImGui->Disable();
     Application->OnStop();
     Window->DestroyWindow();
 
@@ -89,5 +88,5 @@ CRenderer* CEngine::GetRenderer() const
 
 CImGui* CEngine::GetImGui() const
 {
-    return UI;
+    return ImGui;
 }

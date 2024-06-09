@@ -7,6 +7,8 @@
 #include "Renderer/Mesh.h"
 #include "Renderer/Renderer.h"
 
+//SFieldRegistrar* CMeshComponent::Field1 = new SFieldRegistrar(EMetaFieldType::Int32, "Field1");
+
 void CMeshComponent::Tick(float DeltaTime)
 {
     if (Mesh.IsValid())

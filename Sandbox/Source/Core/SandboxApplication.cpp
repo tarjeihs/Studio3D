@@ -1,4 +1,4 @@
-#include <iostream>
+    #include <iostream>
 
 #include "EngineModule.h"
 #include "Core/Entrypoint.h"
@@ -8,41 +8,50 @@
 class CSandboxApplication : public CApplication
 {
 public:
+    CSandboxApplication(const std::string& InName, uint32 InWidth, uint32 InHeight)
+        : CApplication(InName, InWidth, InHeight)
+    {
+    }
+    
     virtual void OnStart() override
     {
         GetResourceManager()->LoadShaderAsset("DefaultShader", "D:/Laboratory/Modules/Studio3D/Engine/Source/Shaders/DefaultVS.glsl", "D:/Laboratory/Modules/Studio3D/Engine/Source/Shaders/DefaultFS.glsl");
         GetResourceManager()->LoadMeshAsset("123", "D:/Laboratory/Modules/Studio3D/Engine/Content/UtahTeapot/D-21-11.fbx");
         
-        CActor* MeshActor = GetScene()->SpawnActor(); 
+        CActor* MeshActor = GetScene()->SpawnActor("MeshActor"); 
         MeshActor->SetActorLocation(glm::vec3(0));
 
-        CMeshComponent* MeshComponent = MeshActor->AddComponent<CMeshComponent>();
+        CMeshComponent* MeshComponent = MeshActor->AddComponent<CMeshComponent>(R"(MeshComp)");
         MeshComponent->SetMesh(GetResourceManager()->GetResource<CMesh>("Model"));
     
-        CActor* PointLightActor = GetScene()->SpawnActor();
+        CActor* PointLightActor = GetScene()->SpawnActor("PointLightActor");
         PointLightActor->SetActorLocation({5.0f, -1.0f, 0.0f});
-        PointLightActor->AddComponent<CPointLightComponent>();
+        PointLightActor->AddComponent<CPointLightComponent>(R"(PointLightComp)");
 
-        CActor* PointLightActor2 = GetScene()->SpawnActor();
+        CActor* PointLightActor2 = GetScene()->SpawnActor("PointLightActor2");
         PointLightActor2->SetActorLocation({0.0f, 3.0f, 0.0f});
-        PointLightActor2->AddComponent<CPointLightComponent>();
+        PointLightActor2->AddComponent<CPointLightComponent>(R"(PointLightComp)");
 
-        CActor* Sphere = GetScene()->SpawnActor();
+        CActor* Sphere = GetScene()->SpawnActor("Sphere");
         Sphere->SetActorLocation({3.0f, 0.0f, 0.0f});
-        Sphere->AddComponent<CPrimitiveComponent>(EMeshType::Sphere);
+        Sphere->AddComponent<CPrimitiveComponent>(R"(SphereMeshComp)", EMeshType::Sphere);
 
-        CActor* Cube = GetScene()->SpawnActor();
+        CActor* Cube = GetScene()->SpawnActor("Cube");
         Cube->SetActorLocation({-3.0f, 0.0f, 0.0f});
-        Cube->AddComponent<CPrimitiveComponent>(EMeshType::Cube);
+        Cube->AddComponent<CPrimitiveComponent>(R"(CubeMeshComp)", EMeshType::Cube);
 
-        CActor* Capsule = GetScene()->SpawnActor();
+        CActor* Capsule = GetScene()->SpawnActor("Capsule");
         Capsule->SetActorLocation({-3.0f, 0.0f, 3.0f});
-        Capsule->AddComponent<CPrimitiveComponent>(EMeshType::Capsule);
+        Capsule->AddComponent<CPrimitiveComponent>(R"(CapsuleMeshComp)", EMeshType::Capsule);
 
-        Player = GetScene()->SpawnActor();
+        Player = GetScene()->SpawnActor("Player");
         Player->SetActorLocation(glm::vec3(0.0f, 0.0f, 2.5f));
-        CCameraComponent* Camera = Player->AddComponent<CCameraComponent>();
+        CCameraComponent* Camera = Player->AddComponent<CCameraComponent>(R"(CameraComponent)");
         GetScene()->SetActiveCamera(Camera);
+
+        CActor* Capsule2 = GetScene()->SpawnActor("Capsule");
+        Capsule2->SetActorLocation({-3.0f, 0.0f, 3.0f});
+        Capsule2->AddComponent<CPrimitiveComponent>(R"(CapsuleMeshComp)", EMeshType::Capsule);
     }
 
     float CameraSpeed = 1.5f;
@@ -73,7 +82,7 @@ public:
         {
             Player->AddLocation(CameraComponent->WorldUp * CameraSpeed * GetEngine()->Time.GetDeltaTime());
         }
-        if (CInput::KeyPress(S3D_KEY_LEFT_CONTROL))
+        if (CInput::KeyPress(S3D_KEY_LEFT_SHIFT))
         {
             Player->AddLocation(-(CameraComponent->WorldUp * CameraSpeed * GetEngine()->Time.GetDeltaTime()));
         }
@@ -120,5 +129,5 @@ private:
 
 CApplication* CreateApplication()
 {
-    return new CSandboxApplication();
+    return new CSandboxApplication("Sandbox", 1400, 900);
 }

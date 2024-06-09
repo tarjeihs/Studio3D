@@ -38,7 +38,7 @@ struct STimespan
 		DeltaTime = SDuration(0);
 	}
 
-	void Update()
+	void Validate()
 	{
 		auto NewTime = SClock::now();
 		DeltaTime = NewTime - Current;
@@ -68,11 +68,36 @@ class CScene;
 class CApplication
 {
 public:
+	CApplication(const std::string& InName, uint32 InWidth, uint32 InHeight)
+		: Name(InName), Width(InWidth), Height(InHeight)
+	{
+	}
+	
 	virtual ~CApplication() = default;
 	
 	virtual void OnStart() = 0;
 	virtual void OnUpdate(float DeltaTime) = 0;
 	virtual void OnStop() = 0;
+
+protected:
+	std::string Name;
+	uint32 Width, Height;
+};
+
+struct SMetrics
+{
+	uint32 DrawCallCounter;
+	
+	uint32 CurrentObjectAllocated;
+	uint32 TotalObjectAllocated;
+
+	size_t CurrentSizeAllocated;
+	size_t TotalSizeAllocated;
+
+	void Reset()
+	{
+		DrawCallCounter = 0;
+	}
 };
 
 class CEngine
@@ -94,13 +119,14 @@ public:
 	CImGui* GetImGui() const;
 	
 	STimespan Time;
-
+	SMetrics Metrics;
+	
 protected:
 	CApplication* Application;
 	CWindow* Window;
 	CRenderer* Renderer;
 	CScene* Scene;
-	CImGui* UI;
+	CImGui* ImGui;
 
 	static CEngine* GEngine;
 

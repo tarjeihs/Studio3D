@@ -39,7 +39,7 @@ void CWindowsWindow::CreateNativeWindow()
     glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     
     glfwMakeContextCurrent(Window);
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(0); // Enable vsync
     
     glfwSetCursorPosCallback(Window, [](GLFWwindow* Window, double X, double Y)
     {

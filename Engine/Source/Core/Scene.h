@@ -10,13 +10,16 @@ class CScene
 {
 public:
     template<typename TActor = CActor>
-    TActor* SpawnActor()
+    TActor* SpawnActor(const std::string& Name = "Unnamed_Actor")
     {
         static_assert(std::is_base_of<CActor, TActor>::value, "TActor must be derived from CActor.");
-
-        auto Actor = new TActor();
+        
+        auto Actor = new TActor(Name);
         
         Actors.Push(Actor);
+
+        Metrics.CurrentActorCount++;
+        Metrics.TotalActorCount++;
 
         return Actor;
     }
@@ -57,6 +60,13 @@ public:
         ActiveCamera.Reset(NewActiveCamera);
     }
     
+    struct SMetrics
+    {
+        uint32 CurrentActorCount;
+        uint32 TotalActorCount;
+    };
+    SMetrics Metrics;
+
 private:
     TArray<CActor*> Actors;
 

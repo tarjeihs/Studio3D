@@ -43,4 +43,5 @@ void CMesh::Draw()
     MeshAsset.VAO->Bind();
     glDrawElements(GL_TRIANGLES, static_cast<int32>(MeshAsset.Indices.size()), GL_UNSIGNED_INT, 0);
     MeshAsset.VAO->Unbind();
+    GetEngine()->Metrics.DrawCallCounter++;
 }

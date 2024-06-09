@@ -5,13 +5,16 @@
 #include "Core/AssetManager.h"
 #include "Math/Transform.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Memory/Mem.h"
+#include "Object/Object.h"
 
 class CComponent;
 
-class CActor
+class CActor : public CObject
 {
 public:
-    CActor()
+    CActor(const std::string& InName)
+        : Name(InName)
     {
         Transform.Location = glm::vec3(0.0f);
         Transform.Rotation = glm::vec3(0.0f);
@@ -25,10 +28,11 @@ public:
     virtual void Tick(float DeltaTime);
 
     template<typename TComponent, typename... TArgs>
-    TComponent* AddComponent(TArgs&&... Args)
+    TComponent* AddComponent(const std::string& Name, TArgs&&... Args)
     {
         TComponent* Component = new TComponent(std::forward<TArgs>(Args)...);
         Component->SetOwner(this);
+        Component->Rename(Name);
         Components.Push(Component);
         return Component;
     }
@@ -44,6 +48,11 @@ public:
             }
         }
         return nullptr;
+    }
+
+    TArrayView<CComponent*> GetComponents() const
+    {
+        return TArrayView(Components);
     }
 
     inline void AddLocation(const glm::vec3& NewLocation)
@@ -88,6 +97,8 @@ public:
     STransform Transform;
 
     TArray<CComponent*> Components;
+
+    std::string Name;
 
 private:
     friend class CComponent;
