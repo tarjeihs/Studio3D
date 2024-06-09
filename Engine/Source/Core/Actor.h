@@ -1,7 +1,9 @@
 ﻿#pragma once
-#include "Camera.h"
-#include "Component.h"
+
+#include <glm/vec3.hpp>
+
 #include "Core/AssetManager.h"
+#include "Math/Transform.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 class CComponent;
@@ -44,6 +46,11 @@ public:
         return nullptr;
     }
 
+    inline void AddLocation(const glm::vec3& NewLocation)
+    {
+        Transform.Location += NewLocation;
+    }
+    
     inline void SetActorLocation(const glm::vec3& NewLocation)
     {
         Transform.Location = NewLocation;

@@ -4,9 +4,7 @@
 
 #include <glm/glm.hpp>
 
-CCamera* CCamera::GCamera = nullptr;
-
-void CCamera::CalculateCameraTransform()
+void CCameraComponent::CalculateCameraTransform()
 {
     glm::vec3 NewFront;
     NewFront.x = glm::cos(glm::radians(Yaw)) * glm::cos(glm::radians(Pitch));
@@ -17,6 +15,6 @@ void CCamera::CalculateCameraTransform()
     Right = glm::normalize(glm::cross(Front, WorldUp));
     Up = glm::normalize(glm::cross(Right, Front));
 
-    ViewMatrix = glm::lookAt(Position, Position + Front, Up);
+    ViewMatrix = glm::lookAt(GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + Front, Up);
     ProjectionMatrix = glm::perspective(glm::radians(FieldOfView), static_cast<float>(G_VIEWPORT_WIDTH) / static_cast<float>(G_VIEWPORT_HEIGHT), ZNear, ZFar);
 }

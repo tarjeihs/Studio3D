@@ -5,7 +5,7 @@
 #include "Core/Camera.h"
 #include "Memory/Memory.h"
 
-class CCamera;
+class CCameraComponent;
 class CMaterial;
 class CMesh;
 
@@ -47,13 +47,14 @@ public:
     TArray<CRenderCommand> Commands;
 };
 
+
 class CRenderer
 {
 public:
     virtual ~CRenderer() = default;
     
     virtual void BeginFrame() = 0;
-    virtual void Submit(CMesh* Mesh, CMaterial* Material, CCamera* Camera, const STransform& Transform) = 0;
+    virtual void Submit(CMesh* Mesh, CMaterial* Material, const STransform& Transform) = 0;
     virtual void EndFrame() = 0;
 
 protected:

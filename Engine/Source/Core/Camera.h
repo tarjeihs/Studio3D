@@ -1,23 +1,18 @@
 ﻿#pragma once
 
+#include "Component.h"
 #include "glm/fwd.hpp"
 #include "glm/vec3.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "Math/Transform.h"
 
-class CActor;
-
-// TODO: Subclass CActor
-class CCamera
+class CCameraComponent : public CComponent
 {
 public:
-    static CCamera* GCamera;
-    
-    CCamera(glm::vec3 InPosition = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 InUp = glm::vec3(0.0f, 1.0f, 0.0f), float InYaw = -90.f, float InPitch = 0)
-            : Position(InPosition), WorldUp(InUp), Yaw(InYaw), Pitch(InPitch), FieldOfView(66.0f)
+    CCameraComponent(glm::vec3 InUp = glm::vec3(0.0f, 1.0f, 0.0f), float InYaw = -90.f, float InPitch = 0)
+            : WorldUp(InUp), Yaw(InYaw), Pitch(InPitch), FieldOfView(66.0f)
     {
-        CalculateCameraTransform();
     }
 
     void CalculateCameraTransform();
@@ -46,7 +41,6 @@ public:
         return LocalToWorldSpace;
     }
 
-    glm::vec3 Position;
     glm::vec3 Front { 0.0f, 0.0f, -1.0f };
     glm::vec3 Up;
     glm::vec3 Right;

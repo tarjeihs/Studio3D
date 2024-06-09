@@ -7,7 +7,7 @@
 #include "glm/mat4x4.hpp"
 
 class CTexture2D;
-class CCamera;
+class CCameraComponent;
 
 enum class EUniformType
 {

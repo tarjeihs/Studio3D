@@ -4,6 +4,7 @@
 
 #include "../../../../Math/Source/MathTypes.h"
 
+class CInput;
 class CEvent;
 
 struct SWindowSpecification

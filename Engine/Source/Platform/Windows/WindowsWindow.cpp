@@ -7,6 +7,8 @@
 
 #include "Core/Engine.h"
 #include "Core/Camera.h"
+#include "Core/Input.h"
+#include "Core/Scene.h"
 #include "Math/Math.h"
 
 // Mouse Controllers
@@ -66,15 +68,31 @@ void CWindowsWindow::CreateNativeWindow()
         pitch += yoffset;
         
         pitch = Math::Clamp(pitch, -89.9f, 89.9f);
-        
-        CCamera::GCamera->Pitch = pitch;
-        CCamera::GCamera->Yaw = yaw;
-        CCamera::GCamera->CalculateCameraTransform();
+
+        CCameraComponent* Camera = GetScene()->GetActiveCamera();
+
+        if (Camera)
+        {
+            Camera->Pitch = pitch;
+            Camera->Yaw = yaw;
+        }
     });
 
     glfwSetKeyCallback(Window, [](GLFWwindow* Window, int32 KeyCode, int32 ScanCode, int32 Action, int32 Mod)
     {
         SWindowUserData& UserData = *(SWindowUserData*)glfwGetWindowUserPointer(Window);
+
+        auto Now = std::chrono::steady_clock::now();
+        
+        if (Action == GLFW_PRESS)
+        {
+            CInput::GetKeyPressData(KeyCode).bIsPressed = true;
+            CInput::GetKeyPressData(KeyCode).Start = Now;
+        }
+        else if (Action == GLFW_RELEASE)
+        {
+            CInput::GetKeyPressData(KeyCode).bIsPressed = false;
+        }
     });
 
     glfwSetFramebufferSizeCallback(Window, [](GLFWwindow* Window, int width, int height)
@@ -116,10 +134,6 @@ void CWindowsWindow::CreateNativeWindow()
     const GLubyte* version = glGetString(GL_VERSION);
     std::cout << "Renderer: " << renderer << std::endl;
     std::cout << "OpenGL version supported: " << version << std::endl;
-
-    int samples;
-    glGetIntegerv(GL_SAMPLES, &samples);
-    std::cout << "Number of samples: " << samples << std::endl;
 }
 
 void CWindowsWindow::DestroyWindow()

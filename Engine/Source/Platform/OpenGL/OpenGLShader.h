@@ -7,6 +7,11 @@
 class COpenGLShader : public CShader
 {
 public:
+    virtual ~COpenGLShader() override
+    {
+        Delete();
+    }
+    
     virtual void Compile() override;
     virtual void Use() override;
     virtual void Delete() override;

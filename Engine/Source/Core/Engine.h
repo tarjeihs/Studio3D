@@ -60,38 +60,55 @@ struct STimespan
 	}
 };
 
-class CScene;
+class CWindow;
 class CRenderer;
+class CScene;
 
-/* Global pointers */
-extern class CWindow* GWindow;
-//extern class CEngine* GEngine;
+class CApplication
+{
+public:
+	virtual ~CApplication() = default;
+	
+	virtual void OnStart() = 0;
+	virtual void OnUpdate(float DeltaTime) = 0;
+	virtual void OnStop() = 0;
+};
 
 class CEngine
 {
 public:
-	void Start();
-	void Run();
-	void Stop();
-
-	virtual void OnUpdate(float DeltaTime) = 0;
-	
-	STimespan Time;
-
-	CScene* GetScene() const;
-	CRenderer* GetRenderer() const;
-
-	inline static CEngine* Get()
+	static inline CEngine* Get()
 	{
 		return GEngine; 
 	}
 
-private:
-	CScene* Scene;
+	void Start();
+	void Run();
+	void Stop();
+
+	CApplication* GetApplication() const;
+	CWindow* GetWindow() const;
+	CScene* GetScene() const;
+	CRenderer* GetRenderer() const;
+
+	STimespan Time;
+
+protected:
+	CApplication* Application;
+	CWindow* Window;
 	CRenderer* Renderer;
+	CScene* Scene;
 
 	static CEngine* GEngine;
+
+private:
+	friend class CApplication;
 };
 
 // Entrypoint as defined externally
-CEngine* CreateEngine();
+CApplication* CreateApplication();
+
+static inline CEngine* GetEngine()
+{
+	return CEngine::Get();
+}

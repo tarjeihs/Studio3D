@@ -1,11 +1,9 @@
 #pragma once
 
-extern CEngine* CreateEngine();
-
 int main()
 {
-    auto Engine = CreateEngine();
-
+    auto Engine = new CEngine();
+    
     Engine->Start();
 
     Engine->Run();

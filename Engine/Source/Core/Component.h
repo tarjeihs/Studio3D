@@ -9,17 +9,22 @@ public:
     {
     }
 
+    CActor* GetOwner() const
+    {
+        return Owner;
+    }
+    
     void SetOwner(CActor* NewOwner)
     {
         Owner = NewOwner;
     }
     
-    virtual void Tick(float DeltaTime) = 0;
-
-    CActor* Owner;
+    virtual void Tick(float DeltaTime) {}
 
 protected:
     using Super = CComponent;
 
     friend class CActor; 
+
+    CActor* Owner;
 };
