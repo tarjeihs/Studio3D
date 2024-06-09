@@ -58,4 +58,7 @@ public:
 
     glm::mat4 ViewMatrix;
     glm::mat4 ProjectionMatrix;
+
+    bool bCanMovePitch = true;
+    bool bCanMoveYaw = true;
 };

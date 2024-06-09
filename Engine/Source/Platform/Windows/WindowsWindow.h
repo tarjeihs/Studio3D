@@ -19,4 +19,7 @@ public:
     virtual void Swap() override;
     
     virtual bool ShouldClose() const override;
+    virtual void SetCursorMode(ECursorMode CursorMode) override;
+
+    void MoveCursorToCenter();
 };

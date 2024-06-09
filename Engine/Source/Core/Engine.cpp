@@ -11,7 +11,7 @@
 #include "Renderer/Mesh.h"
 #include "Platform/OpenGL/OpenGLRenderer.h"
 #include "Platform/Windows/WindowsWindow.h"
-#include "Components/PointLightComponent.h"
+#include "Platform/OpenGL/OpenGLImGui.h"
 
 CEngine* CEngine::GEngine = nullptr;
 
@@ -23,7 +23,9 @@ void CEngine::Start()
     Window->CreateNativeWindow();
     Renderer = new COpenGLRenderer();
     Scene = new CScene();
-
+    UI = new COpenGLImGui();
+    UI->Enable();
+    
     Application = CreateApplication();
     Application->OnStart();
 }
@@ -39,15 +41,17 @@ void CEngine::Run()
         Application->OnUpdate(Time.GetDeltaTime());
 
         Scene->Tick(Time.GetDeltaTime());
-        
-        Renderer->BeginFrame();
 
+        Renderer->BeginFrame();
         for (CActor* Actor : Scene->GetActors())
         {
             Actor->Tick(Time.GetDeltaTime());
         }
-        
         Renderer->EndFrame();
+
+        UI->BeginFrame();
+        UI->OnRender(Time.GetDeltaTime());
+        UI->EndFrame();
         
         Window->Swap();
     }
@@ -55,6 +59,7 @@ void CEngine::Run()
 
 void CEngine::Stop()
 {
+    UI->Disable();
     Application->OnStop();
     Window->DestroyWindow();
 
@@ -80,4 +85,9 @@ CScene* CEngine::GetScene() const
 CRenderer* CEngine::GetRenderer() const
 {
     return Renderer;
+}
+
+CImGui* CEngine::GetImGui() const
+{
+    return UI;
 }

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <functional>
-
-#include "../../../../Math/Source/MathTypes.h"
+#include "Math/MathTypes.h"
+#include "Engine.h"
 
 class CInput;
 class CEvent;
@@ -18,6 +17,11 @@ struct SWindowSpecification
 
 struct SWindowUserData
 {
+};
+
+enum class ECursorMode
+{
+    None = 0, Visible, Hidden
 };
 
 class CWindow
@@ -44,9 +48,30 @@ public:
     virtual void Swap() = 0;
     
     virtual bool ShouldClose() const = 0;
+    virtual void SetCursorMode(ECursorMode CursorMode) = 0;
 
     inline void* GetNativeWindow() const
     {
         return WindowHandle;
-    } 
+    }
+
+    const char* GetTitle() const
+    {
+        return Specification.Title;
+    }
+    
+    uint32 GetWidth() const
+    {
+        return Specification.Width;
+    }
+
+    uint32 GetHeight() const
+    {
+        return Specification.Height;
+    }
 };
+
+static inline CWindow* GetWindow()
+{
+    return CEngine::Get()->GetWindow();
+}

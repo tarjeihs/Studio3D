@@ -7,6 +7,7 @@
 	#define FORCEINLINE __forceinline
 #endif
 
+class CImGui;
 typedef std::size_t SizeType;
 
 //#ifdef MOD_DEBUG
@@ -90,7 +91,8 @@ public:
 	CWindow* GetWindow() const;
 	CScene* GetScene() const;
 	CRenderer* GetRenderer() const;
-
+	CImGui* GetImGui() const;
+	
 	STimespan Time;
 
 protected:
@@ -98,6 +100,7 @@ protected:
 	CWindow* Window;
 	CRenderer* Renderer;
 	CScene* Scene;
+	CImGui* UI;
 
 	static CEngine* GEngine;
 

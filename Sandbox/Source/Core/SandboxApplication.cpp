@@ -47,6 +47,7 @@ public:
 
     float CameraSpeed = 1.5f;
     bool bDebugDraw = false;
+    bool bCursorMode = false;
 
     virtual void OnUpdate(float DeltaTime) override
     {
@@ -87,6 +88,23 @@ public:
             {
                 bDebugDraw = true;
                 GetResourceManager()->GetResource<COpenGLShader>("DefaultShader")->SetBool("bDrawTriangle", true);
+            }
+        }
+        if (CInput::KeyHold(S3D_KEY_LEFT_ALT, 0.1f))
+        {
+            if (bCursorMode)
+            {
+                bCursorMode = false;
+                GetWindow()->SetCursorMode(ECursorMode::Hidden);
+                GetScene()->GetActiveCamera()->bCanMovePitch = true;
+                GetScene()->GetActiveCamera()->bCanMoveYaw = true;
+            }
+            else
+            {
+                bCursorMode = true;
+                GetWindow()->SetCursorMode(ECursorMode::Visible);
+                GetScene()->GetActiveCamera()->bCanMovePitch = false;
+                GetScene()->GetActiveCamera()->bCanMoveYaw = false;
             }
         }
     }

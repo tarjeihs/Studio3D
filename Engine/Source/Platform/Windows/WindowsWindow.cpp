@@ -8,6 +8,7 @@
 #include "Core/Engine.h"
 #include "Core/Camera.h"
 #include "Core/Input.h"
+#include "Core/KeyCode.h"
 #include "Core/Scene.h"
 #include "Math/Math.h"
 
@@ -71,9 +72,13 @@ void CWindowsWindow::CreateNativeWindow()
 
         CCameraComponent* Camera = GetScene()->GetActiveCamera();
 
-        if (Camera)
+        if (Camera->bCanMovePitch)
         {
             Camera->Pitch = pitch;
+        }
+
+        if (Camera->bCanMoveYaw)
+        {
             Camera->Yaw = yaw;
         }
     });
@@ -84,6 +89,11 @@ void CWindowsWindow::CreateNativeWindow()
 
         auto Now = std::chrono::steady_clock::now();
         
+        if (KeyCode == S3D_KEY_ESCAPE)
+        {
+            glfwSetWindowShouldClose(Window, true);
+        }
+
         if (Action == GLFW_PRESS)
         {
             CInput::GetKeyPressData(KeyCode).bIsPressed = true;
@@ -155,4 +165,25 @@ void CWindowsWindow::Swap()
 bool CWindowsWindow::ShouldClose() const
 {
     return glfwWindowShouldClose((GLFWwindow*)WindowHandle);
+}
+
+void CWindowsWindow::SetCursorMode(ECursorMode CursorMode)
+{
+    switch (CursorMode)
+    {
+        case ECursorMode::Hidden: { MoveCursorToCenter(); glfwSetInputMode((GLFWwindow*)WindowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED); break; }
+        case ECursorMode::Visible: { MoveCursorToCenter(); glfwSetInputMode((GLFWwindow*)WindowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL); break; }
+        default: { break; }
+    }
+}
+
+void CWindowsWindow::MoveCursorToCenter()
+{
+    int32 Width, Height;
+    glfwGetWindowSize((GLFWwindow*)WindowHandle, &Width, &Height);
+
+    double CenterX = Width / 2.0;
+    double CenterY = Height / 2.0;
+
+    glfwSetCursorPos((GLFWwindow*)WindowHandle, CenterX, CenterY);
 }
