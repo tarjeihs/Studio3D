@@ -16,5 +16,5 @@ void CCameraComponent::CalculateCameraTransform()
     Up = glm::normalize(glm::cross(Right, Front));
 
     ViewMatrix = glm::lookAt(GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + Front, Up);
-    ProjectionMatrix = glm::perspective(glm::radians(FieldOfView), static_cast<float>(G_VIEWPORT_WIDTH) / static_cast<float>(G_VIEWPORT_HEIGHT), ZNear, ZFar);
+    ProjectionMatrix = glm::perspective(glm::radians(FieldOfView), static_cast<float>(PARAMETER_VIEWPORT_WIDTH) / static_cast<float>(PARAMETER_VIEWPORT_HEIGHT), ZNear, ZFar);
 }

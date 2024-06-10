@@ -37,7 +37,7 @@ public:
         Sphere->AddComponent<CPrimitiveComponent>(R"(SphereMeshComp)", EMeshType::Sphere);
 
         CActor* Cube = GetScene()->SpawnActor("Cube");
-        Cube->SetActorLocation({-3.0f, 0.0f, 0.0f});
+        Cube->SetActorLocation({-2.f, 0.0f, 0.0f});
         Cube->AddComponent<CPrimitiveComponent>(R"(CubeMeshComp)", EMeshType::Cube);
 
         CActor* Capsule = GetScene()->SpawnActor("Capsule");

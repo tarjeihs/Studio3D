@@ -1,16 +1,21 @@
 #pragma once
+
 #include <cstddef>
-#include <cstdint>
+
+#include "Math/MathTypes.h"
 
 struct SUUID 
 {
 	SUUID();
-	SUUID(uint64_t InUUID);
+	SUUID(uint64 InUUID);
 	SUUID(const SUUID&) = default;
 
-	operator uint64_t() const { return UUID; }
+	operator uint64() const
+	{
+		return UUID;
+	}
 private:
-	uint64_t UUID;
+	uint64 UUID;
 };
 
 namespace std
@@ -20,9 +25,9 @@ namespace std
 	template<>
 	struct hash<SUUID>
 	{
-		std::size_t operator()(const SUUID& uuid) const
+		std::size_t operator()(const SUUID& UUID) const noexcept
 		{
-			return (uint64_t)uuid;
+			return (uint64)UUID;
 		}
 	};
 };

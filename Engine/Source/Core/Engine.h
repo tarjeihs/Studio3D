@@ -17,8 +17,8 @@ typedef std::size_t SizeType;
 
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
-static constexpr int32 G_VIEWPORT_WIDTH = 1920;
-static constexpr int32 G_VIEWPORT_HEIGHT = 1080;
+static constexpr int32 PARAMETER_VIEWPORT_WIDTH = 1600;
+static constexpr int32 PARAMETER_VIEWPORT_HEIGHT = 1000;
 
 /* A duration of time in seconds. */
 struct STimespan

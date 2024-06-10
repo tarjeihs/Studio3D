@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <iostream>
+
 #include "Component.h"
 #include "glm/fwd.hpp"
 #include "glm/vec3.hpp"

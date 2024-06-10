@@ -9,11 +9,6 @@
 #include "Memory/Mem.h"
 #include "Memory/Memory.h"
 
-enum class EMetaFieldType
-{
-	Int32,
-};
-
 class CObject
 {
 	static std::mutex ObjectAllocatorMutex;

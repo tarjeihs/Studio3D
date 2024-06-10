@@ -19,7 +19,7 @@ void CEngine::Start()
 {
     GEngine = this;
 
-    Window = new CWindowsWindow(SWindowSpecification { "Engine", G_VIEWPORT_WIDTH, G_VIEWPORT_HEIGHT } );
+    Window = new CWindowsWindow(SWindowSpecification { "Engine", PARAMETER_VIEWPORT_WIDTH, PARAMETER_VIEWPORT_HEIGHT } );
     Window->CreateNativeWindow();
     Renderer = new COpenGLRenderer();
     Scene = new CScene();
