@@ -31,3 +31,8 @@ Thumbs.db
 *.un~
 Session.vim
 .netrwhist
+
+# Visual Studio project files
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
