@@ -5,6 +5,7 @@
 #include "Core/Camera.h"
 #include "Memory/Memory.h"
 
+class CMaterialInstance;
 class CCameraComponent;
 class CMaterial;
 class CMesh;
@@ -54,7 +55,7 @@ public:
     virtual ~CRenderer() = default;
     
     virtual void BeginFrame() = 0;
-    virtual void Submit(CMesh* Mesh, CMaterial* Material, const STransform& Transform) = 0;
+    virtual void Submit(CMesh* Mesh, CMaterial* Material, CMaterialInstance* MaterialInstance, const STransform& Transform) = 0;
     virtual void EndFrame() = 0;
 
 protected:

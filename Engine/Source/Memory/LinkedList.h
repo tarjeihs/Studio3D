@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <type_traits>
 
-#include "../../../Math/Source/MathTypes.h"
+#include "Math/MathTypes.h"
 
 template<typename TElement>
 struct TLinkedListNode

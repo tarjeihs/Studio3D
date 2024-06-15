@@ -4,6 +4,10 @@
 #include "Material.h"
 #include <vector>
 
+#include "MaterialInstance.h"
+
+class CMaterialInstance;
+
 struct SMeshAsset
 {
     uint8 Stride = 8; // Position: 3 + Normal: 3 + UV0: 2
@@ -23,13 +27,13 @@ struct SMeshAsset
 class CMesh
 {
 private:
-    TSharedPtr<CMaterial> Material;
+    CMaterialInstance* MaterialInstance;
 
     SMeshAsset MeshAsset;
     
 public:
     CMesh()
-        : Material(nullptr)
+        : MaterialInstance(nullptr)
     {
     }
     
@@ -42,15 +46,20 @@ public:
 
     inline CMaterial* GetMaterial() const
     {
-        return Material.Get();
+        return MaterialInstance->BaseMaterial;
     }
 
-    void SetMaterial(CMaterial* NewMaterial)
+    inline CMaterialInstance* GetMaterialInstance() const
     {
-        Material.Reset(NewMaterial);
+        return MaterialInstance;
     }
 
-    void UploadAssetData(const std::vector<glm::vec3>& Vertices, const std::vector<glm::vec3>& Normals, const std::vector<glm::vec2>& UV0, const std::vector<uint32>& Indices);
+    void SetMaterialInstance(CMaterialInstance* NewMaterial)
+    {
+        MaterialInstance = NewMaterial;
+    }
+
+    void UploadAssetData(const std::vector<glm::vec3>& Vertices, const std::vector<glm::vec3>& Normals, const std::vector<glm::vec2>& UV0, const std::vector<uint32>& Indices, const std::vector<glm::vec3>& Tangents, const std::vector<glm::vec3>& BiTangents);
 
     // Draw Call
     void Draw();

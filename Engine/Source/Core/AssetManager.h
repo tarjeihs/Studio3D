@@ -5,6 +5,7 @@
 #include <assimp/scene.h>
 
 #include "Memory/Mem.h"
+#include "Memory/Memory.h"
 
 class CMaterial;
 class CMesh;
@@ -12,13 +13,9 @@ class CShader;
 
 struct SAsset
 {
-    ~SAsset()
-    {
-        Data = nullptr;
-    }
+    virtual ~SAsset() = default;
     
-    void* Data;
-    size_t Size;
+    TArray<void*> Data;
 };
 
 // Use ./Content/ as the base folder for any assets.
@@ -35,17 +32,24 @@ public:
     void LoadTextureAsset(const std::string& Name, const std::string& Path);
     
     template<typename TAsset>
-    TAsset* GetResource(const std::string& Name)
+    TAsset* GetResource(const std::string& Name, int32 Idx = 0)
     {
         auto It = Data.find(Name);
         assert(It != Data.end() && "Asset does not exist.");
-        return Cast<TAsset>(It->second->Data);
+        return Cast<TAsset>(It->second->Data[Idx]);
+    }
+
+    const SAsset& GetAsset(const std::string& Name) const
+    {
+        auto It = Data.find(Name);
+        assert(It != Data.end() && "Asset does not exist.");
+        return *It->second;        
     }
 
 protected:
     // Mesh File Loader Utility
-    void ProcessNodeRecursive(aiNode* Node, const aiScene* Scene);
-    void ProcessMesh(aiMesh *Mesh, const aiScene* Scene);
+    void ProcessNodeRecursive(SAsset* Asset, aiNode* Node, const aiScene* Scene);
+    void ProcessMesh(SAsset* Asset, aiMesh *Mesh, const aiScene* Scene);
     CMaterial* ProcessMaterial(aiMaterial* Material);
 
     // Shader File Loader Utility

@@ -7,9 +7,12 @@ class CPrimitiveComponent : public CMeshComponent
 public:
     CPrimitiveComponent(const EMeshType InPrimitiveType)
     {
+        CMaterial* Material = new CMaterial();
+        Material->AddShader(GetResourceManager()->GetResource<COpenGLShader>("DefaultShader"));
+        CMaterialInstance* MaterialInstance = new CMaterialInstance(Material);
+        
         Mesh.Reset(new CMesh());
-        Mesh->SetMaterial(new CMaterial());
-        Mesh->GetMaterial()->AddShader(GetResourceManager()->GetResource<COpenGLShader>("DefaultShader"));
+        Mesh->SetMaterialInstance(MaterialInstance);
         
         SetPrimitiveType(InPrimitiveType);
     }

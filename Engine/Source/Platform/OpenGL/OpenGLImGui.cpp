@@ -1,9 +1,11 @@
 ﻿#include "EnginePCH.h"
 #include "OpenGLImGui.h"
 
+#include "Core/Scene.h"
+
 #include <imgui_impl_opengl3.h>
 
-#include "Core/Scene.h"
+#include "Math/Math.h"
 
 void COpenGLImGui::Enable()
 {
@@ -44,7 +46,12 @@ void COpenGLImGui::OnRender(float DeltaTime)
 {
     {
         ImGui::Begin("Scene Hierarchy", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-         
+        ImVec2 Size = ImGui::GetWindowSize();
+        if (ImGui::Button("Add Entity", ImVec2(Size.x - 20, 20)))
+        {
+            GetScene()->SpawnActor();
+        }
+        
         static int ActorIndex = -1;
         for (int Index = 0; Index < GetScene()->GetActors().GetSize(); ++Index)
         {
@@ -115,16 +122,54 @@ void COpenGLImGui::OnRender(float DeltaTime)
             ImGui::Separator();
             ImGui::Text("Components: %d", Actor->GetComponents().GetSize());
 
-            static int ComponentIndex = -1;
-            for (int Index = 0; Index < Actor->GetComponents().GetSize(); ++Index)
+            static bool dropdownOpen = false; // State of the dropdown
+            std::string selectedItem = "Select an item"; // The currently selected item
+            
+            // Create the button
+            if (ImGui::Button("Add Component"))
             {
-                if (ImGui::Selectable(Actor->GetComponents()[Index]->GetName().c_str(), ComponentIndex == Index))
+                dropdownOpen = !dropdownOpen; // Toggle the dropdown state
+                if (dropdownOpen)
                 {
-                    ComponentIndex == Index ? ComponentIndex = -1 : ComponentIndex = Index;
-                    CComponent* Comp = new CComponent();
+                    ImGui::OpenPopup("Dropdown");
                 }
             }
 
+            // Create the popup for the dropdown
+            if (ImGui::BeginPopup("Dropdown"))
+            {
+                //for (CScriptClass* ScriptClass : GetInterop()->Classes)
+                //{
+                //    if (ImGui::Selectable(ScriptClass->ClassName.c_str()))
+                //    {
+                //        selectedItem = ScriptClass->ClassName;
+                //        dropdownOpen = false; // Close the dropdown
+//
+                //        GetInterop()->CreateScriptComponent(Actor, ScriptClass->GetFullName().c_str());
+                //    }
+                //}
+                ImGui::EndPopup();
+            }
+            
+            static int ComponentIndex = -1;
+            for (int Index = 0; Index < Actor->GetComponents().GetSize(); ++Index)
+            {
+                ImGui::PushID(Index); // Push a unique identifier onto the ID stack
+                if (ImGui::Selectable(Actor->GetComponents()[Index]->GetName().c_str(), ComponentIndex == Index))
+                {
+                    ComponentIndex == Index ? ComponentIndex = -1 : ComponentIndex = Index;
+                }
+                ImGui::PopID(); // Pop the unique identifier off the ID stack
+            }
+            
+            if (ComponentIndex >= 0)
+            {
+                ImGui::Begin("Component", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+                for (uint16 Index = 0; Index < Actor->GetComponents().GetSize(); ++Index)
+                {
+                    Actor->GetComponents()[Index]->OnImGuiRender();
+                }
+            }
         }
         ImGui::Unindent();
         
@@ -136,10 +181,8 @@ void COpenGLImGui::OnRender(float DeltaTime)
         ImGui::Text("FPS: %f", 1.0f / GetEngine()->Time.GetDeltaTime());
         ImGui::Text("MS: %f", GetEngine()->Time.GetDeltaTime());
         ImGui::Text("Draw Calls: %d", GetEngine()->Metrics.DrawCallCounter);
-        ImGui::Text("Current Object Allocated: %d", GetEngine()->Metrics.CurrentObjectAllocated);
-        ImGui::Text("Total Objects Allocated: %d", GetEngine()->Metrics.TotalObjectAllocated);
-        ImGui::Text("Current Size: %d (KB)", GetEngine()->Metrics.CurrentSizeAllocated / 10);
-        ImGui::Text("Total Size: %d (KB)", GetEngine()->Metrics.TotalSizeAllocated / 10);
+        ImGui::Text("Objects: %d", GetEngine()->Metrics.CurrentObjectAllocated);
+        ImGui::Text("Heap Size (MB): %d", GMemoryMetrics.CurrentHeapAllocation / (1024 * 1024));
         ImGui::End();
     }
 }

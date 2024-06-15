@@ -121,7 +121,7 @@ public:
         : VertexShaderProgram(MakeUniquePtr<SShaderProgram>()), FragmentShaderProgram(MakeUniquePtr<SShaderProgram>())
     {
     }
-    
+
     virtual ~CShader() = default;
     
     virtual void Compile() = 0;

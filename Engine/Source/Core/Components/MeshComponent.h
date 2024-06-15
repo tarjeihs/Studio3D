@@ -23,7 +23,8 @@ public:
     }
 
     virtual void Tick(float DeltaTime);
-
+    virtual void OnImGuiRender() override;
+    
     inline CMesh* GetMesh() const
     {
         return Mesh.Get();

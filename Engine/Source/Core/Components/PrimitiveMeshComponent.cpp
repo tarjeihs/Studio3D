@@ -2,7 +2,6 @@
 #include "PrimitiveMeshComponent.h"
 
 #include <array>
-#include <span>
 
 #include "Renderer/Mesh.h"
 
@@ -14,6 +13,54 @@ constexpr float PARAMETER_CAPSULE_RADIUS =        0.25f;
 constexpr float PARAMETER_CAPSULE_HALFHEIGHT =    0.2f;
 constexpr uint32 PARAMETER_CAPSULE_RINGS =         20;
 constexpr uint32 PARAMETER_CAPSULE_SECTORS =       20;
+
+namespace Utils
+{
+    static void CalculateTangentsAndBiTangents(const std::vector<glm::vec3>& Vertices, const std::vector<glm::vec2>& TexCoords, const std::vector<uint32>& Indices, std::vector<glm::vec3>& Tangents, std::vector<glm::vec3>& BiTangents)
+    {
+        Tangents = std::vector(Vertices.size(), glm::vec3(0));
+        BiTangents = std::vector(Vertices.size(), glm::vec3(0));
+
+        for (size_t i = 0; i < Indices.size(); i += 3)
+        {
+            uint32_t i1 = Indices[i];
+            uint32_t i2 = Indices[i + 1];
+            uint32_t i3 = Indices[i + 2];
+
+            glm::vec3 v0 = Vertices[i1];
+            glm::vec3 v1 = Vertices[i2];
+            glm::vec3 v2 = Vertices[i3];
+
+            glm::vec2 uv0 = TexCoords[i1];
+            glm::vec2 uv1 = TexCoords[i2];
+            glm::vec2 uv2 = TexCoords[i3];
+
+            glm::vec3 deltaPos1 = v1 - v0;
+            glm::vec3 deltaPos2 = v2 - v0;
+
+            glm::vec2 deltaUV1 = uv1 - uv0;
+            glm::vec2 deltaUV2 = uv2 - uv0;
+
+            float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+            glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
+            glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
+
+            Tangents[i1] += tangent;
+            Tangents[i2] += tangent;
+            Tangents[i3] += tangent;
+
+            BiTangents[i1] += bitangent;
+            BiTangents[i2] += bitangent;
+            BiTangents[i3] += bitangent;
+        }
+
+        for (size_t i = 0; i < Vertices.size(); ++i)
+        {
+            Tangents[i] = glm::normalize(Tangents[i]);
+            BiTangents[i] = glm::normalize(BiTangents[i]);
+        }
+    }
+}
 
 void CPrimitiveComponent::SetPrimitiveTypeCube()
 {
@@ -77,7 +124,11 @@ void CPrimitiveComponent::SetPrimitiveTypeCube()
         20, 21, 22, 22, 23, 20
     };
     
-    Mesh->UploadAssetData(Vertices, Normals, TexCoords, Indices);
+    std::vector<glm::vec3> Tangents;
+    std::vector<glm::vec3> BiTangents;
+    Utils::CalculateTangentsAndBiTangents(Vertices, TexCoords, Indices, Tangents, BiTangents);
+
+    Mesh->UploadAssetData(Vertices, Normals, TexCoords, Indices, Tangents, BiTangents);
 }
 
 void CPrimitiveComponent::SetPrimitiveTypeSphere()
@@ -98,7 +149,7 @@ void CPrimitiveComponent::SetPrimitiveTypeSphere()
             glm::vec3 vertex = glm::vec3(X, Y, Z) * PARAMETER_SPHERE_RADIUS;
             glm::vec3 normal = glm::normalize(glm::vec3(X, Y, Z));
             glm::vec2 texCoord = glm::vec2((float)S / PARAMETER_SPHERE_SECTORS, (float)R / PARAMETER_SPHERE_RINGS);
-
+            
             Vertices.push_back(vertex);
             Normals.push_back(normal);
             TexCoords.push_back(texCoord);
@@ -122,7 +173,11 @@ void CPrimitiveComponent::SetPrimitiveTypeSphere()
         }
     }
 
-    Mesh->UploadAssetData(Vertices, Normals, TexCoords, Indices);
+    std::vector<glm::vec3> Tangents;
+    std::vector<glm::vec3> BiTangents;
+    Utils::CalculateTangentsAndBiTangents(Vertices, TexCoords, Indices, Tangents, BiTangents);
+
+    Mesh->UploadAssetData(Vertices, Normals, TexCoords, Indices, Tangents, BiTangents);
 }
 
 void CPrimitiveComponent::SetPrimitiveTypeCapsule()
@@ -239,6 +294,10 @@ void CPrimitiveComponent::SetPrimitiveTypeCapsule()
             Indices.push_back(first + 1);
         }
     }
-    
-    Mesh->UploadAssetData(Vertices, Normals, TexCoords, Indices);
+
+    std::vector<glm::vec3> Tangents;
+    std::vector<glm::vec3> BiTangents;
+    Utils::CalculateTangentsAndBiTangents(Vertices, TexCoords, Indices, Tangents, BiTangents);
+
+    Mesh->UploadAssetData(Vertices, Normals, TexCoords, Indices, Tangents, BiTangents);
 }

@@ -110,7 +110,7 @@ public:
 
     ~TSharedPtr()
     {
-        if (Pointer && --(*ReferenceCount) == 0)
+        if (ReferenceCount && --(*ReferenceCount) == 0)
         {
             delete Pointer;
             delete ReferenceCount;
@@ -141,8 +141,7 @@ public:
     {
         if (this != &Other)
         {
-            if (Pointer && --(*ReferenceCount) == 0)
-            {
+            if (ReferenceCount && --(*ReferenceCount) == 0) {
                 delete Pointer;
                 delete ReferenceCount;
             }

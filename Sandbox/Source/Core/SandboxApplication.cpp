@@ -1,37 +1,56 @@
-    #include <iostream>
+#include <iostream>
 
-#include "EngineModule.h"
-#include "Core/Entrypoint.h"
+#include "Core/Application.h"
+#include "Core/AssetManager.h"
+#include "Core/Input.h"
 #include "Core/KeyCode.h"
+#include "Core/Scene.h"
+#include "Core/Window.h"
+#include "Core/Components/MeshComponent.h"
+#include "Core/Components/PointLightComponent.h"
+#include "Core/Components/PrimitiveMeshComponent.h"
+#include "Renderer/MaterialInstance.h"
 
-
-class CSandboxApplication : public CApplication
+class CEditorEngine : public CEngine
 {
 public:
-    CSandboxApplication(const std::string& InName, uint32 InWidth, uint32 InHeight)
-        : CApplication(InName, InWidth, InHeight)
-    {
-    }
-    
     virtual void OnStart() override
     {
-        GetResourceManager()->LoadShaderAsset("DefaultShader", "D:/Laboratory/Modules/Studio3D/Engine/Source/Shaders/DefaultVS.glsl", "D:/Laboratory/Modules/Studio3D/Engine/Source/Shaders/DefaultFS.glsl");
-        GetResourceManager()->LoadMeshAsset("123", "D:/Laboratory/Modules/Studio3D/Engine/Content/UtahTeapot/D-21-11.fbx");
+        //GetResourceManager()->LoadMeshAsset("Sponza", "D:/Laboratory/Modules/Studio3D/Engine/Content/sponza/source/Sponza/Sponza.fbx");
+        //const SAsset& MeshAsset = GetResourceManager()->GetAsset("Sponza");
         
-        CActor* MeshActor = GetScene()->SpawnActor("MeshActor"); 
-        MeshActor->SetActorLocation(glm::vec3(0));
+        //CMaterial* Mat = new CMaterial();
+        //Mat->AddShader(GetResourceManager()->GetResource<COpenGLShader>("DefaultShader"));
+        
+        //for (int32 Index = 0; Index < MeshAsset.Data.GetSize(); ++Index)
+        //{
+        //    CActor* MeshActor = GetScene()->SpawnActor("MeshActor_" + std::to_string(Index)); 
+        //    CMeshComponent* MeshComponent = MeshActor->AddComponent<CMeshComponent>(R"(MeshComp)");
+        //    MeshComponent->SetMesh(Cast<CMesh>(MeshAsset.Data[Index]));
+//
+        //    CMaterialInstance* Instance = new CMaterialInstance(Mat);
+        //    MeshComponent->GetMesh()->SetMaterialInstance(Instance);
+        //}
+        GetResourceManager()->LoadShaderAsset("DefaultShader", "D:/Laboratory/Modules/Studio3D/Engine/Source/Shaders/DefaultVS.glsl", "D:/Laboratory/Modules/Studio3D/Engine/Source/Shaders/DefaultFS.glsl");
+        GetResourceManager()->LoadMeshAsset("drone", "D:/Laboratory/Modules/Studio3D/Engine/Content/UtahTeapot/D-21-11.fbx");
 
+        GetResourceManager()->LoadTextureAsset("albedo", "D:/Laboratory/Modules/Studio3D/Engine/Content/UtahTeapot/textures/d-21-11-v0-diffuse-alt.png");
+        GetResourceManager()->LoadTextureAsset("ao", "D:/Laboratory/Modules/Studio3D/Engine/Content/UtahTeapot/textures/d-21-11-v0-ao.png");
+        GetResourceManager()->LoadTextureAsset("normal", "D:/Laboratory/Modules/Studio3D/Engine/Content/UtahTeapot/textures/d-21-11-v0-normal.png");
+        GetResourceManager()->LoadTextureAsset("metalness", "D:/Laboratory/Modules/Studio3D/Engine/Content/UtahTeapot/textures/d-21-11-v0-metalness.png");
+        GetResourceManager()->LoadTextureAsset("roughness", "D:/Laboratory/Modules/Studio3D/Engine/Content/UtahTeapot/textures/d-21-11-v0-roughness.png");
+
+        CMaterial* SimpleColorMaterial = new CMaterial(); // TODO: Implement
+        
+        CActor* MeshActor = GetScene()->SpawnActor("MeshActor");
         CMeshComponent* MeshComponent = MeshActor->AddComponent<CMeshComponent>(R"(MeshComp)");
-        MeshComponent->SetMesh(GetResourceManager()->GetResource<CMesh>("Model"));
-    
-        CActor* PointLightActor = GetScene()->SpawnActor("PointLightActor");
-        PointLightActor->SetActorLocation({5.0f, -1.0f, 0.0f});
-        PointLightActor->AddComponent<CPointLightComponent>(R"(PointLightComp)");
-
-        CActor* PointLightActor2 = GetScene()->SpawnActor("PointLightActor2");
-        PointLightActor2->SetActorLocation({0.0f, 3.0f, 0.0f});
-        PointLightActor2->AddComponent<CPointLightComponent>(R"(PointLightComp)");
-
+        MeshComponent->SetMesh(GetResourceManager()->GetResource<CMesh>("drone"));
+        MeshComponent->GetMesh()->GetMaterialInstance()->SetParameter("albedo", GetResourceManager()->GetResource<CTexture2D>("albedo"));
+        MeshComponent->GetMesh()->GetMaterialInstance()->SetParameter("ao", GetResourceManager()->GetResource<CTexture2D>("ao"));
+        MeshComponent->GetMesh()->GetMaterialInstance()->SetParameter("normal", GetResourceManager()->GetResource<CTexture2D>("normal"));
+        MeshComponent->GetMesh()->GetMaterialInstance()->SetParameter("metalness", GetResourceManager()->GetResource<CTexture2D>("metalness"));
+        MeshComponent->GetMesh()->GetMaterialInstance()->SetParameter("roughness", GetResourceManager()->GetResource<CTexture2D>("roughness"));
+        
         CActor* Sphere = GetScene()->SpawnActor("Sphere");
         Sphere->SetActorLocation({3.0f, 0.0f, 0.0f});
         Sphere->AddComponent<CPrimitiveComponent>(R"(SphereMeshComp)", EMeshType::Sphere);
@@ -48,13 +67,9 @@ public:
         Player->SetActorLocation(glm::vec3(0.0f, 0.0f, 2.5f));
         CCameraComponent* Camera = Player->AddComponent<CCameraComponent>(R"(CameraComponent)");
         GetScene()->SetActiveCamera(Camera);
-
-        CActor* Capsule2 = GetScene()->SpawnActor("Capsule");
-        Capsule2->SetActorLocation({-3.0f, 0.0f, 3.0f});
-        Capsule2->AddComponent<CPrimitiveComponent>(R"(CapsuleMeshComp)", EMeshType::Capsule);
     }
 
-    float CameraSpeed = 1.5f;
+    float CameraSpeed = 5.0f;
     bool bDebugDraw = false;
     bool bCursorMode = false;
 
@@ -99,6 +114,10 @@ public:
                 GetResourceManager()->GetResource<COpenGLShader>("DefaultShader")->SetBool("bDrawTriangle", true);
             }
         }
+        if (CInput::KeyHold(S3D_KEY_F5, 0.02f))
+        {
+            //GetInterop()->Reload();
+        }
         if (CInput::KeyHold(S3D_KEY_LEFT_ALT, 0.1f))
         {
             if (bCursorMode)
@@ -127,7 +146,19 @@ private:
     CActor* Player;
 };
 
-CApplication* CreateApplication()
+#pragma once
+
+int main()
 {
-    return new CSandboxApplication("Sandbox", 1400, 900);
+    CApplication* Application = new CApplication(new CEditorEngine());
+    
+    Application->Start();
+
+    Application->Run();
+
+    Application->Stop();
+
+    delete Application;
+
+    return 0;
 }

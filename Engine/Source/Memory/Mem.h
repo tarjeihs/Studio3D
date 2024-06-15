@@ -2,9 +2,24 @@
 
 #include <assert.h>
 #include <cstdlib> // For std::malloc and std::free
+#include <mutex>
 #include <type_traits>
 
-#include "../../../Math/Source/MathTypes.h"
+#include "Math/MathTypes.h"
+
+struct SMemoryMetrics
+{
+    size_t TotalHeapAllocations = 0;
+    size_t TotalHeapDeallocations = 0;
+    size_t CurrentHeapAllocation = 0;
+};
+extern SMemoryMetrics GMemoryMetrics;
+SMemoryMetrics& GetMemoryMetrics();
+
+void* operator new(size_t size) noexcept(false);
+void* operator new[](size_t size) noexcept(false);
+void operator delete(void* p) noexcept;
+void operator delete[](void* p) noexcept;
 
 template<typename TClassTo>
 static inline TClassTo* Cast(void* Pointer)

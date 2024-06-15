@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include <unordered_map>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Memory/Memory.h"
 #include "Shader.h"
 #include "glm/fwd.hpp"
@@ -69,16 +71,46 @@ struct SUniform
     SUniform(const std::string& name, EUniformType type, CTexture2D* value) : Name(name), Type(type), Texture2DValue(value), Dirty(true) {}
 };
 
+//class CUniformBuffer
+//{
+//public:
+//    GLuint BufferID;
+//    
+//    std::unordered_map<std::string, GLint> UniformLocations;
+//    std::unordered_map<std::string, SUniform> Uniforms;
+//
+//
+//    CUniformBuffer(uint32 ShaderID)
+//    {
+//        glGenBuffers(1, &BufferID);
+//
+//        // Retrieve and store uniform locations
+//        GLint uniformCount;
+//        glGetProgramiv(ShaderID, GL_ACTIVE_UNIFORMS, &uniformCount);
+//        char name[256];
+//        for (int i = 0; i < uniformCount; ++i)
+//        {
+//            GLsizei length;
+//            glGetActiveUniformName(ShaderID, i, sizeof(name), &length, name);
+//            GLint location = glGetUniformLocation(ShaderID, name);
+//            UniformLocations[name] = location;
+//        }
+//    }
+//
+//    ~CUniformBuffer()
+//    {
+//        glDeleteBuffers(1, &BufferID);
+//    }
+//};
+
 // TODO: State caching, only affecting those values that change.
 // TODO: Look into Render Sorting
 class CMaterial
 {
-private:
+protected:
     //TArray<TSharedPtr<CShader>> Shaders;
     TSharedPtr<CShader> Shader;
 
-    std::unordered_map<std::string, SUniform> Uniforms;
-    
 public:
     virtual ~CMaterial() = default;
 
@@ -88,19 +120,6 @@ public:
 
     void AddTexture(CTexture2D* Texture, uint8 Unit = 0);
     
-    void SetParameter(const std::string& Name, const glm::vec4& Value);
-    void SetParameter(const std::string& Name, const glm::vec3& Value);
-    void SetParameter(const std::string& Name, const glm::vec2& Value);
-    void SetParameter(const std::string& Name, float Value);
-    void SetParameter(const std::string& Name, int32 Value);
-    void SetParameter(const std::string& Name, bool Value);
-    void SetParameter(const std::string& Name, const glm::mat4& Value);
-    void SetParameter(const std::string& Name, const glm::mat3& Value);
-    void SetParameter(const std::string& Name, CTexture2D* Value);
-
     // Bind the material (activate shader, bind textures, set uniforms)
-    void Bind();
-
-protected:
-    void UploadUniform(uint32 ShaderID, const std::string& Name, const SUniform& Uniform);
+    virtual void Bind();
 };

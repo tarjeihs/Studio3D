@@ -52,7 +52,7 @@ public:
 
     TArrayView<CComponent*> GetComponents() const
     {
-        return TArrayView(Components);
+        return TArrayView<CComponent*>(Components);
     }
 
     inline void AddLocation(const glm::vec3& NewLocation)
@@ -73,6 +73,11 @@ public:
     inline void SetActorRotation(const glm::vec3& NewRotation)
     {
         Transform.Rotation = NewRotation;
+    }
+
+    inline const STransform& GetTransform() const
+    {
+        return Transform;
     }
 
     inline const glm::vec3& GetActorRotation() const

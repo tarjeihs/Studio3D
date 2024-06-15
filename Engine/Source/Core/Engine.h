@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chrono>
+#include <mutex>
+
 #include "Math/MathTypes.h"
 
 #ifndef FORCEINLINE
@@ -8,6 +10,10 @@
 #endif
 
 class CImGui;
+class CWindow;
+class CRenderer;
+class CScene;
+
 typedef std::size_t SizeType;
 
 //#ifdef MOD_DEBUG
@@ -17,8 +23,8 @@ typedef std::size_t SizeType;
 
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
-static constexpr int32 PARAMETER_VIEWPORT_WIDTH = 1600;
-static constexpr int32 PARAMETER_VIEWPORT_HEIGHT = 1000;
+static constexpr int32 PARAMETER_VIEWPORT_WIDTH = 1920;
+static constexpr int32 PARAMETER_VIEWPORT_HEIGHT = 1080;
 
 /* A duration of time in seconds. */
 struct STimespan
@@ -61,29 +67,6 @@ struct STimespan
 	}
 };
 
-class CWindow;
-class CRenderer;
-class CScene;
-
-class CApplication
-{
-public:
-	CApplication(const std::string& InName, uint32 InWidth, uint32 InHeight)
-		: Name(InName), Width(InWidth), Height(InHeight)
-	{
-	}
-	
-	virtual ~CApplication() = default;
-	
-	virtual void OnStart() = 0;
-	virtual void OnUpdate(float DeltaTime) = 0;
-	virtual void OnStop() = 0;
-
-protected:
-	std::string Name;
-	uint32 Width, Height;
-};
-
 struct SMetrics
 {
 	uint32 DrawCallCounter;
@@ -103,6 +86,8 @@ struct SMetrics
 class CEngine
 {
 public:
+	virtual ~CEngine() = default;
+	
 	static inline CEngine* Get()
 	{
 		return GEngine; 
@@ -111,8 +96,7 @@ public:
 	void Start();
 	void Run();
 	void Stop();
-
-	CApplication* GetApplication() const;
+	
 	CWindow* GetWindow() const;
 	CScene* GetScene() const;
 	CRenderer* GetRenderer() const;
@@ -122,20 +106,17 @@ public:
 	SMetrics Metrics;
 	
 protected:
-	CApplication* Application;
+	virtual void OnStart() {}
+	virtual void OnUpdate(float DeltaTime) {}
+	virtual void OnStop() {}
+	
 	CWindow* Window;
 	CRenderer* Renderer;
 	CScene* Scene;
 	CImGui* ImGui;
-
+	
 	static CEngine* GEngine;
-
-private:
-	friend class CApplication;
 };
-
-// Entrypoint as defined externally
-CApplication* CreateApplication();
 
 static inline CEngine* GetEngine()
 {

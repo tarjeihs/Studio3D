@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "Window.h"
 #include "Actor.h"
+#include "Entrypoint.h"
 #include "Renderer/Mesh.h"
 #include "Platform/OpenGL/OpenGLRenderer.h"
 #include "Platform/Windows/WindowsWindow.h"
@@ -25,9 +26,8 @@ void CEngine::Start()
     Scene = new CScene();
     ImGui = new COpenGLImGui();
     ImGui->Enable();
-    
-    Application = CreateApplication();
-    Application->OnStart();
+
+    OnStart();
 }
 
 void CEngine::Run()
@@ -38,7 +38,7 @@ void CEngine::Run()
         Time.Validate();
 
         Window->Poll();
-        Application->OnUpdate(Time.GetDeltaTime());
+        OnUpdate(Time.GetDeltaTime());
         Scene->Tick(Time.GetDeltaTime());
 
         Renderer->BeginFrame();
@@ -58,22 +58,18 @@ void CEngine::Run()
 
 void CEngine::Stop()
 {
+    OnStop();
+    
     ImGui->Disable();
-    Application->OnStop();
     Window->DestroyWindow();
-
+    //Interop->DestroyMono();
+    
     delete Window;
-    delete Application;
-}
-
-CApplication* CEngine::GetApplication() const
-{
-    return Application;
 }
 
 CWindow* CEngine::GetWindow() const
 {
-return Window;
+    return Window;
 }
 
 CScene* CEngine::GetScene() const

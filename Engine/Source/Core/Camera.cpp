@@ -1,5 +1,8 @@
 ﻿#include "EnginePCH.h"
 #include "Camera.h"
+
+#include <imgui.h>
+
 #include "Engine.h"
 
 #include <glm/glm.hpp>
@@ -17,4 +20,17 @@ void CCameraComponent::CalculateCameraTransform()
 
     ViewMatrix = glm::lookAt(GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + Front, Up);
     ProjectionMatrix = glm::perspective(glm::radians(FieldOfView), static_cast<float>(PARAMETER_VIEWPORT_WIDTH) / static_cast<float>(PARAMETER_VIEWPORT_HEIGHT), ZNear, ZFar);
+}
+
+void CCameraComponent::OnImGuiRender()
+{
+    ImGui::Text("CameraComponent");
+    ImGui::DragFloat("Field Of View", &FieldOfView);
+    ImGui::DragFloat("Z Near", &ZNear);
+    ImGui::DragFloat("Z Far", &ZFar);
+}
+
+void CCameraComponent::SetFieldOfView(float NewFOV)
+{
+    FieldOfView = NewFOV;
 }

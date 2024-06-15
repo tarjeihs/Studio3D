@@ -31,6 +31,10 @@ public:
         return ProjectionMatrix;
     }
 
+    virtual void OnImGuiRender() override;
+
+    void SetFieldOfView(float NewFOV);
+
     // Transforms local space coordinates to world space coordinates.
     inline static glm::mat4 GetViewModel(const STransform& LocalTransform)
     {
@@ -53,7 +57,7 @@ public:
     float FieldOfView;
 
     float ZNear = 0.01f;
-    float ZFar = 1000.0f;
+    float ZFar = 5000.0f;
     
     float CameraMovementSpeed;
     float CameraRotationSpeed;

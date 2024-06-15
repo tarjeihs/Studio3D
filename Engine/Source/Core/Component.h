@@ -24,6 +24,10 @@ public:
     {
     }
 
+    virtual void OnImGuiRender()
+    {
+    }
+
     void Rename(const std::string& NewName)
     {
         Name = NewName;
